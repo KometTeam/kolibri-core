@@ -1,0 +1,31 @@
+# Сообщения. Выверено по lib/backend/modules/messages.dart.
+
+[ops.MsgSend]
+opcode = 64
+wire = "MSG_SEND"
+doc = """
+Отправить сообщение в чат.
+
+`message.cid` — клиентский идентификатор, по нему приходит подтверждение;
+референсный клиент кладёт туда отрицательный timestamp в миллисекундах.
+"""
+[ops.MsgSend.request]
+chatId  = "i64"
+message = "OutgoingMessage"
+notify  = "bool?"
+[ops.MsgSend.response]
+# Форма выверена живым сервером (отправка себе): не только message, но и
+# chatId, счётчик непрочитанного и метка.
+chatId  = "i64?"
+message = { type = "Message?", doc = "Отправленное сообщение, как его вернул сервер." }
+unread  = { type = "i64?", doc = "Непрочитанных в чате после отправки." }
+mark    = "i64?"
+
+[ops.MsgTyping]
+opcode = 65
+wire = "MSG_TYPING"
+doc = "Индикатор набора текста."
+[ops.MsgTyping.request]
+chatId = "i64"
+type   = "string"
+[ops.MsgTyping.response]

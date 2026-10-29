@@ -1,0 +1,111 @@
+name: ci
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  posix:
+    name: ${{ matrix.os }} / ${{ matrix.cc }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+        cc: [gcc, clang]
+        exclude:
+          - os: macos-latest
+            cc: gcc
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Тесты
+        run: make test CC=${{ matrix.cc }}
+
+      - name: Строгий C89
+        run: make c89 CC=${{ matrix.cc }}
+
+      - name: ASan и UBSan
+        run: make asan CC=${{ matrix.cc }}
+
+      - name: Сгенерированное не отстало от схемы
+        run: |
+          make vectors-check
+          make opcodes-check
+          make schema-check
+
+      - name: Обёртка на Python
+        run: make python-test CC=${{ matrix.cc }}
+
+      # Поднимает сервер и фальшивые прокси на localhost и гоняет клиент на C.
+      - name: Интеграция транспорта
+        run: make integration CC=${{ matrix.cc }}
+
+      - name: Адаптер к libzstd
+        run: |
+          if [ "$(uname)" = "Darwin" ]; then P=/usr/local; else
+            sudo apt-get install -y libzstd-dev; P=/usr; fi
+          make zstd-check CC=${{ matrix.cc }} ZSTD=$P
+
+  # Разрядность и порядок байт — то, на чём порт с Rust ломается тише всего.
+  # Здесь тесты гоняются НАСТОЯЩИМ прогоном на чужой архитектуре под qemu,
+  # а не просто компилируются.
+  exotic:
+    name: ${{ matrix.name }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: x86 32 бита
+            packages: gcc-multilib
+            cc: gcc -m32
+            runner: ""
+          - name: ARM 32 бита
+            packages: gcc-arm-linux-gnueabihf qemu-user-static
+            cc: arm-linux-gnueabihf-gcc
+            runner: qemu-arm-static -L /usr/arm-linux-gnueabihf
+          - name: s390x, big-endian
+            packages: gcc-s390x-linux-gnu qemu-user-static
+            cc: s390x-linux-gnu-gcc
+            runner: qemu-s390x-static -L /usr/s390x-linux-gnu
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Тулчейн
+        run: sudo apt-get update && sudo apt-get install -y ${{ matrix.packages }}
+
+      - name: Тесты
+        run: make test CC="${{ matrix.cc }}" RUNNER="${{ matrix.runner }}"
+
+  msvc:
+    name: windows / msvc
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ilammy/msvc-dev-cmd@v1
+
+      # MSVC — самый строгий из целевых компиляторов по части C89, и именно он
+      # ведёт к Windows Phone. Если сборка тут прошла, диалект выдержан.
+      - name: Сборка и тесты
+        shell: cmd
+        run: |
+          if not exist build mkdir build
+          cl /nologo /W4 /I include /I tests /Fobuild\ /Febuild\run_tests.exe ^
+             src\kolibri_codec.c src\kolibri_framing.c src\kolibri_lz4.c ^
+             src\kolibri_status.c tests\main.c tests\kb_test.c tests\test_lz4.c ^
+             tests\test_codec.c tests\test_framing.c tests\test_vectors.c ^
+             tests\test_fuzz.c tests\vectors_data.c
+          build\run_tests.exe
+
+      # Транспорт на Windows иначе никем не собирается: ветка Winsock живёт
+      # только здесь.
+      - name: Сборка клиента с транспортом
+        shell: cmd
+        run: |
+          cl /nologo /W4 /I include /Fobuild\ /Febuild\client.exe ^
+             examples\c\client.c src\kolibri_codec.c src\kolibri_framing.c ^
+             src\kolibri_lz4.c src\kolibri_status.c src\kolibri_msgpack.c ^
+             src\kolibri_session.c src\kolibri_proxy.c src\kolibri_transport.c ^
+             ws2_32.lib

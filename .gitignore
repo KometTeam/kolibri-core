@@ -1,0 +1,16 @@
+/build
+*.o
+*.a
+*.so
+*.dylib
+*.dll
+__pycache__/
+.DS_Store
+
+# мусор сборки Dart
+.dart_tool/
+
+# живые сессии/токены — не коммитить
+*session*.json
+kolibri_session.json
+examples/**/kolibri_session.json

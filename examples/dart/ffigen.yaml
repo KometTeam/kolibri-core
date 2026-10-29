@@ -1,0 +1,17 @@
+# Так биндинги генерируются автоматически, прямо из заголовка ядра:
+#
+#     dart run ffigen --config ffigen.yaml
+#
+# В demo.dart они выписаны руками — ровно то же самое, только видно глазами.
+# В настоящем проекте руками этого никто не пишет.
+name: KolibriBindings
+description: Биндинги к ядру kolibri, сгенерированные из include/kolibri.h.
+output: lib/kolibri_bindings.dart
+headers:
+  entry-points:
+    - ../../include/kolibri.h
+  include-directives:
+    - ../../include/kolibri.h
+preamble: |
+  // @generated ffigen — не редактировать руками.
+  // ignore_for_file: always_specify_types, camel_case_types, non_constant_identifier_names

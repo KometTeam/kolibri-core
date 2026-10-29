@@ -1,0 +1,68 @@
+# Общие типы, на которые ссылаются запросы и ответы.
+# Выверено по референсному клиенту: lib/backend/modules/{account,messages}.dart.
+
+[types.Element]
+doc = """
+Кусок форматирования в тексте сообщения.
+`from` и `length` считаются в **UTF-16 code units**, а не в символах:
+эмодзи вне BMP занимает 2 единицы. См. `markup::utf16_len`.
+"""
+[types.Element.fields]
+type   = { type = "string", doc = "STRONG, EMPHASIZED, UNDERLINE, STRIKETHROUGH, MONOSPACED, HEADING, QUOTE, LINK, ANIMOJI, USER_MENTION" }
+from   = "i64"
+length = "i64"
+
+[types.MessageLink]
+doc = "Ответ на сообщение или пересылка (поле `link` в теле сообщения)."
+[types.MessageLink.fields]
+type      = { type = "string", doc = "REPLY | FORWARD" }
+chatId    = "i64"
+messageId = { type = "any", doc = "Сервер отдаёт то int, то string — см. _parseIntField в референсе." }
+
+[types.DelayedAttributes]
+doc = "Отложенная отправка."
+[types.DelayedAttributes.fields]
+timeToFire   = "i64"
+notifySender = "bool?"
+
+[types.OutgoingMessage]
+doc = "Тело исходящего сообщения — поле `message` в MSG_SEND."
+[types.OutgoingMessage.fields]
+text               = "string"
+cid                = { type = "i64", doc = "Клиентский id: отрицательный timestamp в мс. См. Client::new_cid." }
+elements           = "[Element]"
+attaches           = "[any]"
+link               = "MessageLink?"
+delayedAttributes  = "DelayedAttributes?"
+
+[types.SentMessage]
+doc = "Сообщение, как его вернул сервер."
+[types.SentMessage.fields]
+id       = "any?"
+cid      = "i64?"
+sender   = "any?"
+text     = "string?"
+time     = "i64?"
+status   = "string?"
+elements = "[Element]?"
+
+[types.TokenAttr]
+doc = "Запись в `tokenAttrs`: tokenAttrs.LOGIN.token / tokenAttrs.REGISTER.token."
+[types.TokenAttr.fields]
+token = "string?"
+
+[types.PasswordChallenge]
+doc = "Сервер требует облачный пароль (2FA) вместо выдачи токена."
+[types.PasswordChallenge.fields]
+trackId = "string"
+hint    = "string?"
+
+[types.Profile]
+[types.Profile.fields]
+contact        = "Contact?"
+profileOptions = "any?"
+
+[types.LoginExp]
+doc = "Блок `exp` в LOGIN. Байты — фиксированные, взяты из референсного клиента."
+[types.LoginExp.fields]
+chatsCountGroups = "bytes"

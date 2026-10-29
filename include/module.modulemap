@@ -1,0 +1,9 @@
+// Делает ядро импортируемым из Swift как `import CKolibri` — без единой строки
+// связующего кода: Swift читает kolibri.h напрямую.
+//
+// SwiftPM подхватывает такой каталог целью systemLibrary; для одиночной сборки
+// достаточно `swiftc -I include`.
+module CKolibri {
+    header "kolibri.h"
+    export *
+}

@@ -1,0 +1,236 @@
+# @extracted tools живой захват + парсеры декомпила (round 1 + 2).
+
+[types.AdminParticipant]
+doc = "Значение map chats[].adminParticipants (ключ — id участника). Из Ð¾ÑÐ²ÐµÑÐ° LOGIN, напр. {'10000001':{'id':10000001,'permissions':4095}}. adminParticipants присутствует у 44 из 50 чатов; в записях id есть всегда (44/44), permissions — у 42/44."
+[types.AdminParticipant.fields]
+id = { type = "i64", doc = "id администратора; присутствует во всех 44 записях" }
+permissions = { type = "i64?", doc = "битовая маска прав (напр. 4095); есть у 42 из 44 записей в захвате → опционально" }
+
+[types.Attach]
+doc = "Discriminated union by _type (defpackage/p40 enum). Base class d30; the JSON reader d30.b(w2a) is 'not decompiled', so received field names come from the live capture (channel history response etc.) an"
+[types.Attach.fields]
+_type = { type = "string", doc = "REQUIRED discriminator; one of the p40 enum values (UNKNOWN|CONTROL|PHOTO|VIDEO|AUDIO|STICKER|SHARE|APP|CALL|FILE|CONTACT|PRESENT|INLINE_KEYBOARD|LOCATION|REPLY" }
+event = { type = "string?", doc = "CONTROL (in capture: joinByLink|leave|new). Full enum from lg4.a: unknown|new|add|remove|leave|title|icon|hello|system|joinByLink|pin|botStarted" }
+userId = { type = "i64?", doc = "CONTROL, event=joinByLink (in capture); lg4.a key 'userId'" }
+userIds = { type = "[i64]?", doc = "CONTROL, event=new (in capture, e.g. [10000001] or []); lg4.a key 'userIds'" }
+title = { type = "string?", doc = "CONTROL event=new (in capture, chat title); SHARE (in capture); POLL (jrc.a)" }
+showHistory = { type = "bool?", doc = "CONTROL, event=add — serializer-only (lg4.a, i==3); not in capture" }
+chatType = { type = "string?", doc = "CONTROL, event=new — serializer-only (lg4.a, i==2): UNKNOWN|DIALOG|CHAT|CHANNEL|GROUP_CHAT. Not present on received 'new' events in capture" }
+startPayload = { type = "string?", doc = "CONTROL, event=botStarted — serializer-only (lg4.a)" }
+crop = { type = "any?", doc = "CONTROL, event=icon — serializer-only (lg4.a, k50.e()); not in capture" }
+photoToken = { type = "string?", doc = "PHOTO (in capture; ifc.a key 'photoToken'); also CONTROL title/icon (lg4.a)" }
+baseUrl = { type = "string?", doc = "PHOTO (in capture)" }
+photoId = { type = "i64?", doc = "PHOTO (in capture)" }
+width = { type = "i64?", doc = "PHOTO, VIDEO (in capture)" }
+height = { type = "i64?", doc = "PHOTO, VIDEO (in capture)" }
+url = { type = "string?", doc = "PHOTO, SHARE (both in capture; aof.a key 'url')" }
+previewData = { type = "PreviewData?", doc = "PHOTO, VIDEO (in capture) — object {$bin}" }
+videoId = { type = "i64?", doc = "VIDEO (in capture; rbi.a)" }
+videoType = { type = "i64?", doc = "VIDEO (in capture; rbi.a)" }
+token = { type = "string?", doc = "VIDEO (in capture); AUDIO, FILE serialize KEY_TOKEN='token' (rbi/g60/ec6.a)" }
+duration = { type = "i64?", doc = "VIDEO (in capture, ms), CALL (in capture); AUDIO (g60.a, ms)" }
+thumbnail = { type = "string?", doc = "VIDEO (in capture)" }
+thumbhash = { type = "string?", doc = "VIDEO — serializer-only (rbi.a, byte[] base64 key 'thumbhash'); not in this capture's VIDEO" }
+wave = { type = "string?", doc = "AUDIO, VIDEO waveform — serializer-only (g60/rbi.a, byte[] base64); not in capture" }
+audioId = { type = "i64?", doc = "AUDIO — serializer-only (g60.a)" }
+fileId = { type = "i64?", doc = "FILE — serializer-only (ec6.a); sent only when no token" }
+stickerId = { type = "i64?", doc = "STICKER — serializer-only (rbg.a); only field rbg.a serializes" }
+shareId = { type = "i64?", doc = "SHARE (in capture; aof.a)" }
+description = { type = "string?", doc = "SHARE (in capture)" }
+host = { type = "string?", doc = "SHARE (in capture)" }
+image = { type = "Attach?", doc = "SHARE nested PHOTO attach (in capture)" }
+contentLevel = { type = "bool?", doc = "SHARE (in capture; aof field k boolean)" }
+conversationId = { type = "string?", doc = "CALL (in capture)" }
+callType = { type = "string?", doc = "CALL (in capture; observed 'AUDIO')" }
+hangupType = { type = "string?", doc = "CALL (in capture; observed values MISSED, HUNGUP). Note client toString label differs (HANGUP)" }
+joinLink = { type = "string?", doc = "CALL (in capture)" }
+vcfBody = { type = "string?", doc = "CONTACT vCard body — serializer-only (p74.a)" }
+contactId = { type = "i64?", doc = "CONTACT — serializer-only (p74.a); also Button.contactId (i21)" }
+latitude = { type = "f64?", doc = "LOCATION — serializer-only (cw8.a, Double)" }
+longitude = { type = "f64?", doc = "LOCATION — serializer-only (cw8.a, Double)" }
+livePeriod = { type = "i64?", doc = "LOCATION live location — serializer-only (cw8.a, Long, sent when >0)" }
+zoom = { type = "any?", doc = "LOCATION — serializer-only (cw8.a, Float, sent when >0)" }
+alt = { type = "f64?", doc = "LOCATION altitude — serializer-only (cw8.a, Double, sent when !=0)" }
+epu = { type = "any?", doc = "LOCATION est. position uncertainty — serializer-only (cw8.a, Float)" }
+hdn = { type = "any?", doc = "LOCATION heading — serializer-only (cw8.a, Float)" }
+spd = { type = "any?", doc = "LOCATION speed — serializer-only (cw8.a, Float)" }
+keyboard = { type = "Keyboard?", doc = "INLINE_KEYBOARD (in capture) — object {buttons:[[Button]]}" }
+callbackId = { type = "string?", doc = "INLINE_KEYBOARD (in capture)" }
+buttons = { type = "[[Button]]?", doc = "INLINE_KEYBOARD client->server form (b18.a top-level key 'buttons'); received nested under keyboard.buttons instead" }
+pollId = { type = "i64?", doc = "POLL — serializer-only (jrc.a, sent when >0)" }
+answers = { type = "[any]?", doc = "POLL — serializer-only (jrc.a), array of {text}" }
+settings = { type = "i64?", doc = "POLL settings bitmask — serializer-only (jrc.a, Integer)" }
+owner = { type = "any?", doc = "STORY_REPLY owner ref — serializer-only (zog.a, cng.a())" }
+storyId = { type = "i64?", doc = "STORY_REPLY — serializer-only (zog.a)" }
+
+[types.Button]
+doc = "Inline keyboard button. defpackage/i21; serialized in b18.a; in capture only type/text/url observed (LINK buttons)."
+[types.Button.fields]
+type = { type = "string", doc = "button type enum g21, always serialized (b18.a). In capture: LINK" }
+text = { type = "string", doc = "button label, always serialized (b18.a); in capture" }
+url = { type = "string?", doc = "LINK buttons (in capture; i21.d, serialized only when non-null)" }
+intent = { type = "string?", doc = "intent enum f21 — serializer-only (i21.c via b18.a key 'intent')" }
+payload = { type = "string?", doc = "CALLBACK payload — serializer-only (i21.e via b18.a)" }
+isQuick = { type = "bool?", doc = "serializer-only (i21.f via b18.a)" }
+contactId = { type = "i64?", doc = "serializer-only (i21.g via b18.a)" }
+
+[types.Chat]
+doc = "A chat/dialog/channel entry. Verified against chats[] (50 samples) in Ð¾ÑÐ²ÐµÑÐ° LOGIN and the decompiled parser nm2.java (case labels). Optionality from presence across the 50 login samples; parser-only fields (absent from capture, present as case labels in nm2.java) are optional. All counts, enum values and value types re-checked. Correction vs prior output: liveLocationMessageIds is a map {i64} in the parser, not [i64]."
+[types.Chat.fields]
+id = { type = "i64", doc = "50/50 required. Chat id, e.g. 20000002 or negative." }
+type = { type = "string", doc = "50/50 required. Enum: DIALOG | CHAT | CHANNEL (all present)." }
+status = { type = "string", doc = "50/50 required. Enum: ACTIVE | HIDDEN (both present)." }
+owner = { type = "i64", doc = "50/50 required. Owner user id." }
+participants = { type = "{i64}", doc = "50/50 required. Map participantId(string)->joinTime(i64), verified '10000001'->1700000000000." }
+lastMessage = { type = "Message", doc = "50/50 required. Nested object." }
+lastEventTime = { type = "i64", doc = "50/50 required. Epoch ms." }
+lastDelayedUpdateTime = { type = "i64", doc = "50/50 required. Epoch ms (often 0)." }
+lastFireDelayedErrorTime = { type = "i64", doc = "50/50 required. Epoch ms (often 0)." }
+created = { type = "i64", doc = "50/50 required. Epoch ms." }
+joinTime = { type = "i64", doc = "50/50 required. Epoch ms." }
+modified = { type = "i64", doc = "50/50 required. Epoch ms." }
+options = { type = "{bool}?", doc = "47/50 optional. Map flagName->bool; all values verified bool (OFFICIAL, COMMENTS, SERVICE_CHAT, SIGN_ADMIN, A_PLUS_CHANNEL, ...)." }
+title = { type = "string?", doc = "46/50 optional." }
+access = { type = "string?", doc = "46/50 optional. Enum: PUBLIC | PRIVATE." }
+participantsCount = { type = "i64?", doc = "46/50 optional." }
+messagesCount = { type = "i64?", doc = "46/50 optional. Capture only (no parser case)." }
+reactions = { type = "ChatReactions?", doc = "46/50 optional. Nested object." }
+link = { type = "string?", doc = "45/50 optional. Public link url." }
+admins = { type = "[i64]?", doc = "44/50 optional. Array of admin user ids (int elements)." }
+adminParticipants = { type = "{AdminParticipant}?", doc = "44/50 optional. Map adminId(string)->AdminParticipant {id, permissions}." }
+invitedBy = { type = "i64?", doc = "43/50 optional. User id." }
+videoConversation = { type = "VideoConversation?", doc = "41/50 optional. Nested object." }
+newMessages = { type = "i64?", doc = "7/50 optional. Unread count." }
+cid = { type = "i64?", doc = "5/50 optional. Client/correlation chat id." }
+restrictions = { type = "i64?", doc = "5/50 optional. Bitmask (8128, 8064, 32)." }
+prevMessageId = { type = "i64?", doc = "4/50 optional." }
+hasBots = { type = "bool?", doc = "3/50 optional. Verified bool." }
+description = { type = "string?", doc = "3/50 optional." }
+baseIconUrl = { type = "string?", doc = "2/50 optional. Icon image url." }
+baseRawIconUrl = { type = "string?", doc = "2/50 optional. Raw icon image url." }
+participantSettings = { type = "i64?", doc = "1/50 optional. Parser vbb.c0 count -> i64." }
+subject = { type = "string?", doc = "Parser-only (nm2.java, wtg.h -> string). Optional." }
+pinnedMessage = { type = "Message?", doc = "Parser-only (nm2.java, pma.L -> Message). Optional." }
+pinnedMessageId = { type = "i64?", doc = "Parser-only (nm2.java, vbb.e0 long). Optional." }
+groupChatInfo = { type = "any?", doc = "Parser-only (nm2.java, qd7.a object). Structure not in capture. Optional." }
+hidePinnedMessage = { type = "bool?", doc = "Parser-only (nm2.java, vbb.W bool). Optional." }
+isSuspended = { type = "bool?", doc = "Parser-only (nm2.java, vbb.W bool). Optional." }
+markedAsUnread = { type = "bool?", doc = "Parser-only (nm2.java, vbb.W bool). Optional." }
+unreadPin = { type = "bool?", doc = "Parser-only (nm2.java, vbb.W bool). Optional." }
+unreadReply = { type = "bool?", doc = "Parser-only (nm2.java, vbb.W bool). Optional." }
+blockedParticipantsCount = { type = "i64?", doc = "Parser-only (nm2.java, vbb.c0 count). Optional." }
+commentsBlacklistCount = { type = "i64?", doc = "Parser-only (nm2.java, vbb.c0 count). Optional." }
+pendingJoinRequestsCount = { type = "i64?", doc = "Parser-only (nm2.java, vbb.c0 count). Optional." }
+joinRequestTime = { type = "i64?", doc = "Parser-only (nm2.java, vbb.e0 long). Optional." }
+lastMentionMessageId = { type = "i64?", doc = "Parser-only (nm2.java, vbb.e0 long). Optional." }
+lastReactedMessageId = { type = "i64?", doc = "Parser-only (nm2.java, vbb.e0 long). Optional." }
+lastReaction = { type = "any?", doc = "Parser-only (nm2.java, vbb.h0 object). Structure not in capture. Optional." }
+liveLocationMessageIds = { type = "{i64}?", doc = "Parser-only (nm2.java lines 278-289). Parsed as LinkedHashMap<Long,Long> (put(e0,e0)) => map {i64}, NOT array. Corrected from [i64]." }
+liveStreamUpdateTime = { type = "i64?", doc = "Parser-only (nm2.java, vbb.e0 long). Optional." }
+
+[types.ChatReactions]
+doc = "chats[].reactions из Ð¾ÑÐ²ÐµÑÐ° LOGIN, напр. {'isActive':false,'updateTime':1700000000000}. Присутствует у 46 из 50 чатов; оба поля есть во всех 46."
+[types.ChatReactions.fields]
+isActive = { type = "bool", doc = "активны ли реакции в чате; 46/46" }
+updateTime = { type = "i64", doc = "время последнего обновления (мс); 46/46, встречается значение 0" }
+
+[types.Contact]
+doc = "User/contact profile. Verified: Ð¾ÑÐ²ÐµÑÐ° CONTACT_INFO contacts[0] and Ð¾ÑÐ²ÐµÑÐ° LOGIN profile.contact. All keys present in both samples except phone."
+[types.Contact.fields]
+id = { type = "i64", doc = "int, e.g. 10000001" }
+updateTime = { type = "i64", doc = "epoch ms" }
+registrationTime = { type = "i64", doc = "epoch ms" }
+baseUrl = "string"
+baseRawUrl = "string"
+photoId = { type = "i64", doc = "int, e.g. 30000004" }
+phone = { type = "i64?", doc = "int, present only in LOGIN profile.contact (own profile); absent in 32_contact_info contacts[0]" }
+names = "[Name]"
+options = { type = "[string]", doc = "e.g. ['TT','ONEME']" }
+description = { type = "string", doc = "e.g. 'Ð¾ ÑÐµÐ±Ðµ'" }
+accountStatus = { type = "i64", doc = "int enum, 0 in samples" }
+country = { type = "string", doc = "e.g. RU" }
+
+[types.DelayedAttributes]
+doc = "Модель i55 (ov9.q). НЕ в захвате. Ключ поля и подполя подтверждены декомпилированным i55.c() (i55.java:24) и x3c.java:52."
+[types.DelayedAttributes.fields]
+timeToFire = { type = "i64?", doc = "i55.a. Ключ 'timeToFire' (Long). Время срабатывания отложенной отправки (мс)." }
+notifySender = { type = "bool?", doc = "i55.b. Ключ 'notifySender' (Boolean). Уведомлять отправителя." }
+
+[types.ErrorEnvelope]
+doc = "Весь Ð¾ÑÐ²ÐµÑ-Ð¾ÑÐ¸Ð±ÐºÐ° — конверт ошибки сервера MAX. Все 4 поля присутствуют."
+[types.ErrorEnvelope.fields]
+error = { type = "string", doc = "машинный код ошибки, напр. 'chat.denied'" }
+message = { type = "string", doc = "техническое сообщение, напр. 'User is not admin'" }
+localizedMessage = { type = "string", doc = "локализованное сообщение для пользователя, напр. 'У вас нет доступа к этому чату'" }
+title = { type = "string", doc = "заголовок для пользователя, напр. 'У вас нет доступа к этому чату'" }
+
+[types.Keyboard]
+doc = "INLINE_KEYBOARD wrapper (received in capture under key 'keyboard'). defpackage/zg8 (field a = List<List<i21>>)."
+[types.Keyboard.fields]
+buttons = { type = "[[Button]]", doc = "rows of buttons (in capture)" }
+
+[types.Message]
+doc = "Сообщение TamTam/MAX. Модель ov9. JSON-парсер pma.L(w2a) подтверждённо 'Method not decompiled' (pma.java:175), поэтому ключи восстановлены из захвата и исходящего сериализатора x3c. После адверсариал-"
+[types.Message.fields]
+id = { type = "i64", doc = "Захват (все сообщения). Серверный id (снежинка)." }
+time = { type = "i64", doc = "Захват (все). Время в мс epoch." }
+type = { type = "string", doc = "Захват. Значения: 'USER','CHANNEL' (enum v2a: USER, CHANNEL, CHANNEL_ADMIN, GROUP, UNKNOWN)." }
+sender = { type = "i64", doc = "Захват. userId автора (в канальных — id постящего)." }
+text = { type = "string", doc = "Захват. Может быть пустой строкой (у CONTROL/CALL-attach сообщений)." }
+cid = { type = "i64?", doc = "Захват (64_msg_send_*, 49_history_self). Клиентский id (отрицательный локальный на отправляемых, либо положительный). На чужих/канальных отсутствует. Опциональн" }
+attaches = { type = "[Attach]", doc = "Захват — присутствует во ВСЕХ 35 захваченных сообщениях (пустой [] если нет). Не опционально. Элементы: {_type: CONTROL|CALL|SHARE|PHOTO..., ...}." }
+elements = { type = "[MessageElement]?", doc = "Захват (12/30 канал, 2/5 self). Разметка: {type: STRONG|LINK|USER_MENTION|..., from?, length, attributes?{url}, entityName?}. Опционально." }
+options = { type = "i64?", doc = "Захват (49_history_channel: значение 1; 49_chat_history lastMessage). На уровне СООБЩЕНИЯ это целочисленная битовая маска (не объект, как на уровне чата). Опцио" }
+updateTime = { type = "i64?", doc = "Захват (49_history_channel 2/30, у отредактированных). Время последнего изменения (мс). Опционально." }
+status = { type = "string?", doc = "Захват: 'EDITED' (49_history_channel). Enum p2a: UNKNOWN, EDITED, REMOVED, DELAYED_FIRE_ERROR. Опционально." }
+reactionInfo = { type = "ReactionInfo?", doc = "Захват. Может быть пустым объектом {} либо {counters,totalCount}. Опционально." }
+link = { type = "MessageLink?", doc = "ИСПРАВЛЕНО: ПОДТВЕРЖДЁН захватом (49_history_channel, 5 шт., type REPLY/FORWARD). Реальная входящая форма — {type, message, chatId}. reply/forward-источник. Опц" }
+delayedAttributes = { type = "DelayedAttributes?", doc = "НЕ в захвате. Ключ 'delayedAttributes' подтверждён декомпилированным исходящим сериализатором x3c.java:52 (i55.c()). Отложенная отправка. Опционально." }
+
+[types.MessageElement]
+doc = "An inline formatting/entity range inside Message.elements[] (LOGIN lastMessage). Describes a styled or linked span over the message text. Statistics from the 3 element instances present across the 50 LOGIN lastMessage samples."
+[types.MessageElement.fields]
+type = { type = "string", doc = "element kind enum: STRONG, LINK, etc.; present 3/3" }
+length = { type = "i64", doc = "span length in characters (integer); present 3/3, e.g. 16, 60, 17" }
+from = { type = "i64?", doc = "start offset in characters (integer); optional — present 2/3, absent when the span starts at offset 0" }
+attributes = { type = "any?", doc = "kind-specific attributes object, heterogeneous by type (e.g. {url:'oneme.pw/example'} for LINK); optional — present 1/3" }
+
+[types.MessageLink]
+doc = "reply/forward на сообщение — ВХОДЯЩАЯ форма (ov9.i). Подтверждена захватом 49_history_channel (5 шт.). Замечание: исходящий сериализатор z3c для отправки reply/forward использует ИНЫЕ ключи (type, cha"
+[types.MessageLink.fields]
+type = { type = "string", doc = "Захват. Значения: 'REPLY','FORWARD' (enum ax9). Присутствует во всех 5 захваченных link. Не опционально." }
+message = { type = "Message?", doc = "Захват. Вложенное полное сообщение-источник (ov9). Опционально (в выборке присутствует всегда, но '?' консервативно — p0a.b хранит и messageId как альтернативу," }
+chatId = { type = "i64?", doc = "Захват. Id чата источника (напр. -10000000000003). Опционально." }
+
+[types.Name]
+doc = "Element of Contact.names. Verified in both captures."
+[types.Name.fields]
+name = "string"
+firstName = "string"
+lastName = { type = "string", doc = "may be empty string" }
+type = { type = "string", doc = "e.g. ONEME" }
+
+[types.PreviewData]
+doc = "Inline blurred preview blob for PHOTO/VIDEO. In capture: object with a single key holding base64 WEBP bytes."
+[types.PreviewData.fields]
+
+[types.ReactionCounter]
+doc = "Элемент counters в reactionInfo (из захвата 49_history_channel)."
+[types.ReactionCounter.fields]
+reaction = { type = "string", doc = "Захват. Эмодзи, напр. '👍'." }
+count = { type = "i64", doc = "Захват. Число этой реакции." }
+
+[types.ReactionInfo]
+doc = "Модель t1a. Парсер pfk.b подтверждённо 'Method not decompiled' (pfk.java:93). Структура — из захвата (49_history_channel) и полей t1a. yourReaction УДАЛЕН: нет в захвате, ключ не подтверждён (парсер н"
+[types.ReactionInfo.fields]
+counters = { type = "[ReactionCounter]?", doc = "Захват: [{reaction, count}]. t1a.a (ArrayList). Опционально (в пустом {} отсутствует)." }
+totalCount = { type = "i64?", doc = "Захват. t1a.b (int). Суммарное число реакций." }
+
+[types.VideoConversation]
+doc = "chats[].videoConversation in LOGIN response. The videoConversation field itself is present on 41/50 chats (optional on Chat), but when present all four fields appear on 41/41 -> required within this type."
+[types.VideoConversation.fields]
+conversationId = { type = "string", doc = "uuid; 41/41" }
+joinLink = { type = "string", doc = "41/41" }
+previewParticipantIds = { type = "[i64]", doc = "participant ids; 41/41 (empty [] in sample)" }
+callType = { type = "string", doc = "41/41: AUDIO|..." }
+

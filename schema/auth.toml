@@ -1,0 +1,96 @@
+# Авторизация по телефону: код из SMS, опционально облачный пароль (2FA),
+# затем вход по токену. Выверено по lib/backend/modules/account.dart.
+#
+# `wire` — имя опкода в таблице kolibri_net::protocol::opcodes; тест
+# `opcodes_match_core` сверяет номер с ядром, так что опечатка не проедет.
+
+[ops.AuthRequest]
+opcode = 17
+wire = "AUTH_REQUEST"
+doc = """
+Старт телефонной авторизации — сервер отправляет SMS с кодом.
+
+`type` — `START_AUTH` для первого запроса, `RESEND` для повторного.
+`mode` — 96-байтный anti-spoof fingerprint из
+`kolibri_net::auth::chat_cache_fingerprint`; дайджесты должны быть от **той же**
+версии приложения, что и `app_version`/`build_number` в handshake.
+"""
+[ops.AuthRequest.request]
+phone    = { type = "string", doc = "В формате +7XXXXXXXXXX." }
+type     = "string"
+language = "string?"
+mode     = "bytes?"
+[ops.AuthRequest.response]
+token = { type = "string", doc = "Временный токен, его же передавать в AuthVerify." }
+
+[ops.AuthVerify]
+opcode = 18
+wire = "AUTH"
+doc = """
+Проверка кода из SMS.
+
+Три исхода: в `tokenAttrs.LOGIN` лежит login-токен (вход), в
+`tokenAttrs.REGISTER` — токен регистрации (номер новый), либо пришёл
+`passwordChallenge` — включена 2FA, нужен `AuthLoginCheckPassword`.
+"""
+[ops.AuthVerify.request]
+token         = "string"
+verifyCode    = "string"
+authTokenType = { type = "string", doc = "CHECK_CODE" }
+[ops.AuthVerify.response]
+tokenAttrs        = "{TokenAttr}?"
+profile           = "Profile?"
+passwordChallenge = "PasswordChallenge?"
+presetAvatars     = "any?"
+
+[ops.AuthLoginCheckPassword]
+opcode = 115
+wire = "AUTH_LOGIN_CHECK_PASSWORD"
+doc = "Облачный пароль (2FA) после `passwordChallenge`. В ответе — тот же `tokenAttrs.LOGIN`."
+[ops.AuthLoginCheckPassword.request]
+trackId  = "string"
+password = "string"
+[ops.AuthLoginCheckPassword.response]
+tokenAttrs = "{TokenAttr}?"
+profile    = "Profile?"
+error      = "any?"
+
+[ops.Login]
+opcode = 19
+wire = "LOGIN"
+doc = """
+Вход по login-токену: авторизует уже установленное соединение и отдаёт
+чаты, контакты и конфиг.
+
+`presenceSync`/`chatsSync` = -1 означает «отдай всё с нуля»; при инкрементальной
+синхронизации туда идут метки времени из прошлого ответа.
+"""
+[ops.Login.request]
+token                = "string"
+interactive          = { type = "bool", doc = "false = ghost-режим, сервер не показывает вас онлайн." }
+exp                  = "LoginExp?"
+chatCacheFingerprint = "bytes?"
+presenceSync         = "i64?"
+chatsSync            = "i64?"
+# Ниже — поля, выверенные по декомпилу 26.28 (ly8.java): клиент шлёт метку каждой
+# подсистемы, только если она > 0 (инкрементальная синхронизация).
+contactsSync         = "i64?"
+callsSync            = "i64?"
+lastLogin            = "i64?"
+bannersSync          = "i64?"
+configHash           = { type = "string?", doc = "Хэш последнего полученного config; пусто — отдать заново." }
+[ops.Login.response]
+token    = { type = "string?", doc = "Сервер может выдать обновлённый токен — сохранять надо его." }
+profile  = "Profile?"
+chats    = "[Chat]?"
+time     = "i64?"
+config   = "any?"
+contacts = "any?"
+presence = "any?"
+
+[ops.Logout]
+opcode = 20
+wire = "LOGOUT"
+doc = "Разлогинить соединение. Payload — пустая map, как в референсном клиенте."
+[ops.Logout.request]
+[ops.Logout.response]

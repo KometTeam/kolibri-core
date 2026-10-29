@@ -1,0 +1,700 @@
+# @extracted tools извлечено из декомпила ru.oneme.app 26.28 (x0c + m5h + парсеры).
+# Структуры полей выверены adversarial-проходом: остаются только ключи,
+# буквально присутствующие в java. Типы: сеттер m5h -> тип; вложенные и
+# именованные объекты оставлены как any/[any]/{any} (курсор из msgpack).
+#
+# Уже описанные руками опкоды (auth.toml, messages.toml) сюда не входят.
+
+[ops.Config]
+opcode = 22
+wire = "CONFIG"
+doc = "Извлечено из декомпила 26.28. Verified mq2.java factory constructor with this.c==21 (super(x0c.r)); all 5 request keys confirmed. Response gl3.d=new gl3(3); dispatch gl3.h case 3 -> gl3.i(w2a) reads keys 'hash' and 'user'. Confirmed."
+[ops.Config.request]
+pushToken = { type = "string?", doc = "h('pushToken', str) if non-empty" }
+pushTokens = { type = "[any]?", doc = "d('pushTokens', list) if list!=null" }
+pushOptions = { type = "i64?", doc = "this.a.put('pushOptions', l) Long -> i64; if l!=null" }
+settings = { type = "{any}?", doc = "g('settings', cvVar) if s04Var!=null; optional inner keys hash(string), chats(map of per-chat {dontDisturbUntil,favIndex,sound,vibr,led}), user(b7i notification-settings object PUSH_*/DONT_DISTURB_UNTIL/etc)" }
+reset = { type = "bool?", doc = "a('reset', true) only if z" }
+[ops.Config.response]
+hash = { type = "string?", doc = "strI0.equals('hash') -> vbb.i0 string" }
+user = { type = "any?", doc = "strI0.equals('user') -> lqk.c(w2a) b7i notification-settings object" }
+
+[ops.PresetAvatars]
+opcode = 25
+wire = "PRESET_AVATARS"
+doc = "Извлечено из декомпила 26.28. No request builder (empty). Response bya.i=new bya(7); dispatch bya.h case 7 -> bya.l(w2a) reads 'presetAvatars'. Confirmed."
+[ops.PresetAvatars.request]
+[ops.PresetAvatars.response]
+presetAvatars = { type = "[any]", doc = "strI0.equals('presetAvatars'); array, each element nhk.c(w2a) preset-avatar object" }
+
+[ops.ContactInfo]
+opcode = 32
+wire = "CONTACT_INFO"
+doc = "Извлечено из декомпила 26.28. Both request fields and the response field confirmed by literal setters/key comparisons. No changes."
+[ops.ContactInfo.request]
+contactIds = { type = "[any]", doc = "e('contactIds', long[]) in mq2 c=23 ctor; super(x0c.Y) and x0c.Y = new x0c(...,(short)32,...) confirmed in x0c.java" }
+chat_id = { type = "i64?", doc = "this.a.put('chat_id', l) where l is Long; guarded by if(l!=null) so optional" }
+[ops.ContactInfo.response]
+contacts = { type = "[any]?", doc = "qma.d = new qma(3); h() packed-switch base 0x1 -> a==3 -> pswitch_3; only key 'contacts' compared, parsed by t30.d(w2a) and cast to java.util.List" }
+
+[ops.ContactPresence]
+opcode = 35
+wire = "CONTACT_PRESENCE"
+doc = "Извлечено из декомпила 26.28. Request builder xw.java empty ctor xw(){super(x0c.e1);c=4;} sets no fields -> empty request. Response keys confirmed in bya g()."
+[ops.ContactPresence.request]
+[ops.ContactPresence.response]
+presence = { type = "any?", doc = "bya.e=new bya(3); h() case 3 -> g(w2a); strI0.equals('presence') -> waf.d(w2a) (qpa object)" }
+time = { type = "i64", doc = "strI0.equals('time') -> vbb.e0(w2a, -1L)" }
+
+[ops.ContactInfoByPhone]
+opcode = 46
+wire = "CONTACT_INFO_BY_PHONE"
+doc = "Извлечено из декомпила 26.28. No request_builder in worklist. Response field confirmed. Unchanged."
+[ops.ContactInfoByPhone.request]
+[ops.ContactInfoByPhone.response]
+contact = { type = "any?", doc = "gia.d=new gia(3); switch(this.a) case 3 reads only key via strI0.equals('contact') -> q94.g(w2a); result wrapped in r94" }
+
+[ops.ChatInfo]
+opcode = 48
+wire = "CHAT_INFO"
+doc = "Извлечено из декомпила 26.28. Builder ctor confirmed (worklist had it null). Only chatIds set. No response parser."
+[ops.ChatInfo.request]
+chatIds = { type = "[any]", doc = "mq2(List) ctor c=4, d('chatIds', list); k() case 4 returns (short)48. Array confirmed; element type i64 inferred (chat-id list) as no explicit element type in the setter" }
+[ops.ChatInfo.response]
+
+[ops.ChatHistory]
+opcode = 49
+wire = "CHAT_HISTORY"
+doc = "Извлечено из декомпила 26.28. mq2 ctor c=3 super(x0c.m1)=opcode 49 (x0c.java confirms (short)49). All 12 fields confirmed by literal setters. No response parser."
+[ops.ChatHistory.request]
+chatId = { type = "i64", doc = "f(j, ApiProtocol.PARAM_CHAT_ID) -> 'chatId'" }
+postId = { type = "i64?", doc = "this.a.put('postId', l) Long, guarded if(l!=null)" }
+from = { type = "i64", doc = "f(j2, 'from')" }
+forward = { type = "i32", doc = "c(i, 'forward')" }
+forwardTime = { type = "i64", doc = "f(j3, 'forwardTime')" }
+backward = { type = "i32", doc = "c(i2, 'backward')" }
+backwardTime = { type = "i64", doc = "f(j4, 'backwardTime')" }
+getChat = { type = "bool", doc = "a('getChat', false) literal false" }
+getMessages = { type = "bool", doc = "a('getMessages', z)" }
+chatAccessToken = { type = "string?", doc = "h('chatAccessToken', str) only if str non-empty" }
+itemType = { type = "string", doc = "h('itemType', h55Var.name()) enum name" }
+interactive = { type = "bool", doc = "a('interactive', z2)" }
+[ops.ChatHistory.response]
+
+[ops.ChatMark]
+opcode = 50
+wire = "CHAT_MARK"
+doc = "Извлечено из декомпила 26.28. No request_builder in worklist. Response field confirmed via smali. Unchanged."
+[ops.ChatMark.request]
+[ops.ChatMark.response]
+timestamp = { type = "i64", doc = "qma.c=new qma(2); h() packed-switch base 0x1 -> a==2 -> pswitch_4; only key 'timestamp' compared -> vbb.e0(w2a, default)" }
+
+[ops.ChatMedia]
+opcode = 51
+wire = "CHAT_MEDIA"
+doc = "Извлечено из декомпила 26.28. mq2 ctor c=9 super(x0c.o1)=opcode 51 (x0c.java confirms (short)51). All fields confirmed. No response parser."
+[ops.ChatMedia.request]
+chatId = { type = "i64", doc = "f(j, ApiProtocol.PARAM_CHAT_ID) -> 'chatId'" }
+messageId = { type = "i64", doc = "this.a.put('messageId', l) Long, always set (no null guard)" }
+attachTypes = { type = "[any]?", doc = "d('attachTypes', arrayList) of enum-name strings (PHOTO/VIDEO/AUDIO/...); only when Set non-empty" }
+forward = { type = "i32?", doc = "this.a.put('forward', num) Integer, only if num!=null" }
+backward = { type = "i32?", doc = "this.a.put('backward', num2) Integer, only if num2!=null" }
+[ops.ChatMedia.response]
+
+[ops.ChatJoin]
+opcode = 57
+wire = "CHAT_JOIN"
+doc = "Извлечено из декомпила 26.28. Verified: mx4 case 2 reads only 'chat'. No request builder."
+[ops.ChatJoin.request]
+[ops.ChatJoin.response]
+chat = { type = "any?", doc = "mx4.d=new mx4(2); h(w2a) case 2 (line 491) compares key 'chat' -> nm2.b(w2aVar); returns ks2(chat). Only key on this branch." }
+
+[ops.ChatMembers]
+opcode = 59
+wire = "CHAT_MEMBERS"
+doc = "Извлечено из декомпила 26.28. Request verified against mq2 c=10 ctor; both response keys literally compared in bya case 2. Unchanged from draft."
+[ops.ChatMembers.request]
+chatId = { type = "i64", doc = "mq2 c=10 ctor super(x0c.w1); f(j,'chatId') unconditional" }
+type = { type = "string?", doc = "h('type',str) if str.length()!=0" }
+marker = { type = "i64?", doc = "f(j2,'marker') if j2!=0" }
+count = { type = "i32?", doc = "c(i,'count') if i>0" }
+query = { type = "string?", doc = "h('query',str2) if non-empty" }
+[ops.ChatMembers.response]
+members = { type = "[any]", doc = "bya.d=new bya(2); h(w2a) case 2 (line 829) compares 'members' -> waf.a(...,u8.t) list" }
+marker = { type = "i64", doc = "case 2 (line 831) compares 'marker' -> vbb.e0; returns dz2(marker,members)" }
+
+[ops.ChatPersonalConfig]
+opcode = 61
+wire = "CHAT_PERSONAL_CONFIG"
+doc = "Извлечено из декомпила 26.28. cya.d=new cya(2). Dispatch cya.h(w2a) is 'Method not decompiled'; helpers m/n also not decompiled. Branch unreadable => empty."
+[ops.ChatPersonalConfig.request]
+[ops.ChatPersonalConfig.response]
+chat = { type = "any", doc = "parsed via nm2.b(w2a); nested chat object" }
+
+[ops.ChatLivestreamInfo]
+opcode = 62
+wire = "CHAT_LIVESTREAM_INFO"
+doc = "Извлечено из декомпила 26.28. Verified: gia case 2 reads only 'liveStreams'. No request builder."
+[ops.ChatLivestreamInfo.request]
+[ops.ChatLivestreamInfo.response]
+liveStreams = { type = "[any]", doc = "gia.c=new gia(2); h(w2a) case 2 (line 527) compares 'liveStreams' -> vbb.U length loop of ls8 via bqi.g; returns yt2(list)" }
+
+[ops.MsgGet]
+opcode = 71
+wire = "MSG_GET"
+doc = "Извлечено из декомпила 26.28. Request verified (d77 c=8). RESPONSE DROPPED vs draft: iya.h=new iya(5) but dispatch iya.h(w2a) is 'Method not decompiled', so the N=5 branch is unreadable. Draft's chatId/messages came from private helper d() (returns cla) which cannot be tied to N=5 by any decompiled code => empty per prefer-dropping-over-guessing."
+[ops.MsgGet.request]
+chatId = { type = "i64", doc = "d77 c=8 ctor super(x0c.a2); f(j,'chatId') unconditional" }
+messageIds = { type = "[any]", doc = "e('messageIds', jArr) -> long[]" }
+[ops.MsgGet.response]
+chatId = { type = "i64", doc = "vbb.e0 long; key = ApiProtocol.PARAM_CHAT_ID ('chatId')" }
+messages = { type = "[any]", doc = "parsed via ic4.b(w2a); list of message objects" }
+
+[ops.VideoChatStart]
+opcode = 76
+wire = "VIDEO_CHAT_START"
+doc = "Извлечено из декомпила 26.28. ogc.d=new ogc(2); dispatch ogc.h(w2a) 'Method not decompiled', helper k not decompiled. Branch unreadable => empty. No request builder."
+[ops.VideoChatStart.request]
+[ops.VideoChatStart.response]
+type = { type = "string?", doc = "vbb.i0" }
+callerId = { type = "i64?", doc = "vbb.e0; boxed Long (nullable)" }
+callName = { type = "string?", doc = "vbb.i0" }
+chatId = { type = "i64?", doc = "vbb.e0; boxed Long (nullable)" }
+joinLink = { type = "string?", doc = "vbb.i0" }
+conversationId = { type = "string?", doc = "vbb.i0" }
+
+[ops.VideoChatStartActive]
+opcode = 78
+wire = "VIDEO_CHAT_START_ACTIVE"
+doc = "Извлечено из декомпила 26.28. gya.k=new gya(9); dispatch gya.h(w2a) 'Method not decompiled', helper n not decompiled. Readable helpers parse unrelated keys, cannot attribute N=9 => empty. No request builder."
+[ops.VideoChatStartActive.request]
+[ops.VideoChatStartActive.response]
+conversationId = { type = "string?", doc = "vbb.i0" }
+internalCallerParams = { type = "string?", doc = "vbb.i0" }
+rejectedParticipants = { type = "[any]", doc = "vbb.n0 with zvf/ola element parser; list" }
+
+[ops.PhotoUpload]
+opcode = 80
+wire = "PHOTO_UPLOAD"
+doc = "Извлечено из декомпила 26.28. Request verified against g9b c=1 ctor. Response parser ogc.b=new ogc(0); dispatch ogc.h(w2a) not decompiled => empty."
+[ops.PhotoUpload.request]
+type = { type = "i32?", doc = "g9b c=1 ctor super(x0c.k2); c(hyg.E(i),'type') if i!=1" }
+count = { type = "i32", doc = "c(1,'count') always" }
+profile = { type = "bool?", doc = "this.a.put('profile', bool) where bool is Boolean, if !=null" }
+[ops.PhotoUpload.response]
+url = { type = "string", doc = "vbb.i0; required" }
+
+[ops.VideoUpload]
+opcode = 82
+wire = "VIDEO_UPLOAD"
+doc = "Извлечено из декомпила 26.28. Request verified (thg c=17). Response parser iya.l=new iya(9); dispatch iya.h(w2a) not decompiled => empty."
+[ops.VideoUpload.request]
+type = { type = "i32", doc = "thg c=17 ctor super(x0c.m2); c(hyg.E(i),'type')" }
+count = { type = "i32", doc = "c(1,'count')" }
+uploaderType = { type = "i32", doc = "c(i2,'uploaderType')" }
+[ops.VideoUpload.response]
+info = { type = "[any]?", doc = "vbb.U count + uni.a(w2a) elements; list" }
+uploaderType = { type = "i64?", doc = "vbb.U int, boxed Integer (nullable)" }
+
+[ops.FileDownload]
+opcode = 88
+wire = "FILE_DOWNLOAD"
+doc = "Извлечено из декомпила 26.28. Request verified against mq2 c=28 ctor (fileId, chatId, messageId all i64). RESPONSE DROPPED vs draft: cya.f=new cya(4) but dispatch cya.h(w2a) is 'Method not decompiled', so N=4 branch unreadable. Draft's url/unsafe came from helper l() (returns ld6) which cannot be tied to N=4 by any decompiled code => empty per prefer-dropping-over-guessing."
+[ops.FileDownload.request]
+fileId = { type = "i64", doc = "mq2 c=28 ctor super(x0c.r2); f(j,'fileId') unconditional" }
+chatId = { type = "i64", doc = "f(j2,'chatId') unconditional" }
+messageId = { type = "i64", doc = "f(j3,'messageId') unconditional" }
+[ops.FileDownload.response]
+url = { type = "string", doc = "key = URL_KEY = 'url'; defaults to '' if absent" }
+unsafe = { type = "bool?", doc = "vbb.W (boolean); stays null/absent -> optional" }
+
+[ops.GetCommentsUpdates]
+opcode = 91
+wire = "GET_COMMENTS_UPDATES"
+doc = "Извлечено из декомпила 26.28. No request builder -> empty map. Verified ogc.g=new ogc(5). CAVEAT: ogc.h(w2a) dispatch is dump-skipped so l()->N=5 mapping is unconfirmed; kept the field because l() is the only readable parser and its key matches this opcode's semantics."
+[ops.GetCommentsUpdates.request]
+[ops.GetCommentsUpdates.response]
+commentsInfoUpdates = { type = "[any]?", doc = "ogc.l reads key 'commentsInfoUpdates' as list of ix9 (afk.g), returns e77(list) or null; element type ix9 unknown -> [any]" }
+
+[ops.AuthLoginRestorePassword]
+opcode = 101
+wire = "AUTH_LOGIN_RESTORE_PASSWORD"
+doc = "Извлечено из декомпила 26.28. No request builder -> empty map. Verified bya.c=new bya(1); case 1 decompiled, only key is 'tokenAttrs'."
+[ops.AuthLoginRestorePassword.request]
+[ops.AuthLoginRestorePassword.response]
+tokenAttrs = { type = "{any}?", doc = "bya case1: count via vbb.f0, string keys via vbb.i0, values eik.b(w2a).a(); returned in ic0(cvVar)" }
+
+[ops.Auth2faDetails]
+opcode = 104
+wire = "AUTH_2FA_DETAILS"
+doc = "Извлечено из декомпила 26.28. Request builder g9b(String) sets only trackId (conditionally). Response 'ogcVar' file null -> unreadable, empty response."
+[ops.Auth2faDetails.request]
+trackId = { type = "string?", doc = "g9b(String) c=8 super(x0c.D); h('trackId',str) only if str non-empty" }
+[ops.Auth2faDetails.response]
+
+[ops.ExternalCallback]
+opcode = 105
+wire = "EXTERNAL_CALLBACK"
+doc = "Извлечено из декомпила 26.28. No request builder -> empty map. Verified bya.f=new bya(4) -> i(w2a) decompiled; only keys 'botId','startParam'."
+[ops.ExternalCallback.request]
+[ops.ExternalCallback.response]
+botId = { type = "i64?", doc = "bya.i: vbb.e0 -> Long (default -1)" }
+startParam = { type = "string?", doc = "bya.i: vbb.i0; returned in h56(startParam,botId)" }
+
+[ops.AuthVerifyEmail]
+opcode = 109
+wire = "AUTH_VERIFY_EMAIL"
+doc = "Извлечено из декомпила 26.28. Request builder verified. Response cya.c=new cya(1); cya.h(w2a) is dump-skipped (unit count 1700) -> response unreadable."
+[ops.AuthVerifyEmail.request]
+trackId = { type = "string", doc = "g9b(String,String) c=20 super(x0c.A); h('trackId',str) unconditional" }
+email = { type = "string?", doc = "h('email',str2) only if str2 non-empty" }
+[ops.AuthVerifyEmail.response]
+
+[ops.AuthCheckEmail]
+opcode = 110
+wire = "AUTH_CHECK_EMAIL"
+doc = "Извлечено из декомпила 26.28. Request builder ub0 (not a factory), both fields always set. Response tyf.d=new tyf(1), case 1 decompiled; only keys 'trackId','email'."
+[ops.AuthCheckEmail.request]
+trackId = { type = "string", doc = "ub0(String,String) super(x0c.B); h('trackId',str) unconditional" }
+verifyCode = { type = "string", doc = "h('verifyCode',str2) unconditional" }
+[ops.AuthCheckEmail.response]
+trackId = { type = "string?", doc = "tyf case1: vbb.i0" }
+email = { type = "string?", doc = "tyf case1: vbb.i0; returned in vb0(trackId,email)" }
+
+[ops.AuthSet2fa]
+opcode = 111
+wire = "AUTH_SET_2FA"
+doc = "Извлечено из декомпила 26.28. Request builder verified; corrected expectedCapabilities from [any] to [i8] (list is built from Byte values). Response cd0.a=new cd0() (no parse method) -> unreadable."
+[ops.AuthSet2fa.request]
+trackId = { type = "string", doc = "g9b(String,List,String,String,int) c=17 super(x0c.C); h('trackId',str) unconditional" }
+password = { type = "string?", doc = "h('password',str2) only if non-empty" }
+hint = { type = "string?", doc = "h('hint',str3) only if non-empty" }
+remove2fa = { type = "bool?", doc = "this.a.put('remove2fa', Boolean) only if bool!=null -> bool" }
+expectedCapabilities = { type = "[any]", doc = "d('expectedCapabilities', ArrayList of Byte.valueOf(sqh.a)) -> array of i8; set unconditionally" }
+[ops.AuthSet2fa.response]
+
+[ops.AuthCreateTrack]
+opcode = 112
+wire = "AUTH_CREATE_TRACK"
+doc = "Извлечено из декомпила 26.28. Request builder no-arg sets only 'type' (Java short). Response mx4.c=new mx4(1), case 1 decompiled; only key 'trackId'."
+[ops.AuthCreateTrack.request]
+type = { type = "i32", doc = "no-arg g9b() c=12 super(x0c.t); this.a.put('type',(short)0) - source is a Java short literal 0, emitted as i32" }
+[ops.AuthCreateTrack.response]
+trackId = { type = "string?", doc = "mx4 case1: vbb.i0; returned in cc0(trackId)" }
+
+[ops.AuthCheckPassword]
+opcode = 113
+wire = "AUTH_CHECK_PASSWORD"
+doc = "Извлечено из декомпила 26.28. No request builder -> empty map. Response gl3.b=new gl3(1), case 1 decompiled; only key 'trackId'."
+[ops.AuthCheckPassword.request]
+[ops.AuthCheckPassword.response]
+trackId = { type = "string?", doc = "gl3 case1: vbb.i0; returned in wb0(trackId)" }
+
+[ops.NotifMsgDelete]
+opcode = 142
+wire = "NOTIF_MSG_DELETE"
+doc = "Извлечено из декомпила 26.28. Verified via iya.h smali (iya.i=new iya(6); packed-switch 0x1 -> a=6 = pswitch_2). Builds t0b(nm2,[J,Z). All three keys confirmed; nothing dropped."
+[ops.NotifMsgDelete.request]
+[ops.NotifMsgDelete.response]
+chat = { type = "any", doc = "key 'chat' -> nm2.b(w2a)" }
+ttl = { type = "bool", doc = "key 'ttl' -> vbb.W" }
+messageIds = { type = "[any]", doc = "key 'messageIds' -> waf.c -> long[]" }
+
+[ops.BotInfo]
+opcode = 145
+wire = "BOT_INFO"
+doc = "Извлечено из декомпила 26.28. Verified via gya.h smali (gya.c=new gya(1); packed-switch 0x1 -> a=1 = pswitch_7, inlined). All three keys confirmed."
+[ops.BotInfo.request]
+[ops.BotInfo.response]
+contact = { type = "any", doc = "key 'contact' -> q94.g(w2a)" }
+startMessage = { type = "any", doc = "key 'startMessage' -> uwk.b(w2a)" }
+commands = { type = "[any]", doc = "key 'commands' -> ow0.a -> ArrayList (element factory f5f(13))" }
+
+[ops.NotifMsgDelayed]
+opcode = 154
+wire = "NOTIF_MSG_DELAYED"
+doc = "Извлечено из декомпила 26.28. Verified via gya.n smali (a=6 = pswitch_3 -> n(w2a)). Builds p0b. All six keys confirmed with correct types."
+[ops.NotifMsgDelayed.request]
+[ops.NotifMsgDelayed.response]
+message = { type = "any?", doc = "key 'message' -> pma.L(w2a); nullable" }
+userId = { type = "i64", doc = "key 'userId' -> vbb.e0" }
+updateTypeId = { type = "i32", doc = "key 'updateTypeId' -> vbb.Z -> Byte" }
+lastDelayedUpdateTime = { type = "i64?", doc = "key 'lastDelayedUpdateTime' -> vbb.e0; nullable Long in p0b" }
+chatId = { type = "i64", doc = "key 'chatId' -> vbb.e0" }
+messageIds = { type = "[any]", doc = "key 'messageIds' -> waf.c -> long[]" }
+
+[ops.OkToken]
+opcode = 158
+wire = "OK_TOKEN"
+doc = "Извлечено из декомпила 26.28. Request g9b(String,long) c=0 confirmed. Response zg6.h smali: packed-switch only maps a=1; a=7 falls to default branch reading token/token_refresh_ts/token_lifetime_ts into h9b. 4th long is client nanoTime, not a wire field."
+[ops.OkToken.request]
+value = { type = "string", doc = "h('value',str) (SdkMetricStatEvent.VALUE_KEY)" }
+userId = { type = "i64", doc = "f(j,'userId')" }
+[ops.OkToken.response]
+token = { type = "string", doc = "key 'token' -> vbb.i0" }
+token_refresh_ts = { type = "i64", doc = "key 'token_refresh_ts' -> vbb.e0" }
+token_lifetime_ts = { type = "i64", doc = "key 'token_lifetime_ts' -> vbb.e0" }
+
+[ops.NotifProfile]
+opcode = 159
+wire = "NOTIF_PROFILE"
+doc = "Извлечено из декомпила 26.28. Verified via dfk.j jadx (dfk.g=new dfk(6); switch case 6 -> j). Single key confirmed."
+[ops.NotifProfile.request]
+[ops.NotifProfile.response]
+profile = { type = "any", doc = "key 'profile' -> fsf.w(w2a); returns b1b(i3d)" }
+
+[ops.WebAppInitData]
+opcode = 160
+wire = "WEB_APP_INIT_DATA"
+doc = "Извлечено из декомпила 26.28. Verified via zl0.h smali (zl0.l=new zl0(10); packed-switch 0x0 covers 0..7, a=10 falls to default = pswitch_0) building n2j(url,query_id)."
+[ops.WebAppInitData.request]
+[ops.WebAppInitData.response]
+url = { type = "string", doc = "key 'url' -> vbb.i0" }
+query_id = { type = "string", doc = "key 'query_id' -> vbb.i0" }
+
+[ops.Complain]
+opcode = 161
+wire = "COMPLAIN"
+doc = "Извлечено из декомпила 26.28. Request mq2(cw3,byte,long[],Long,String,Long) c=20 confirmed. Response iya.h smali a=2 = pswitch_5 reads 'success'. All fields confirmed."
+[ops.Complain.request]
+typeId = { type = "i32", doc = "b(cw3.a,'typeId')" }
+reasonId = { type = "i32", doc = "b(b,'reasonId')" }
+ids = { type = "[any]", doc = "e('ids',jArr)" }
+parentId = { type = "i64?", doc = "put('parentId',Long); only if non-null" }
+postId = { type = "i64?", doc = "put('postId',Long); only if parentId!=null and postId!=null" }
+details = { type = "string?", doc = "h('details',str); only if non-empty" }
+[ops.Complain.response]
+success = { type = "bool", doc = "key 'success' -> vbb.W; returns rv3(boolean)" }
+
+[ops.ComplainReasonsGet]
+opcode = 162
+wire = "COMPLAIN_REASONS_GET"
+doc = "Извлечено из декомпила 26.28. Verified via dfk.h jadx case 2 (dfk.c=new dfk(2)). Both keys confirmed; builds bw3(long,List)."
+[ops.ComplainReasonsGet.request]
+[ops.ComplainReasonsGet.response]
+complainSync = { type = "i64", doc = "key 'complainSync' -> vbb.e0" }
+complains = { type = "[any]", doc = "key 'complains' -> waf.a -> List of uv3 (ComplainReasons)" }
+
+[ops.CallHistory]
+opcode = 163
+wire = "CALL_HISTORY"
+doc = "Извлечено из декомпила 26.28. Request g9b(long) c=24 confirmed. Response zl0.h smali a=2 = pswitch_4 building lf1(List,long,boolean). All confirmed."
+[ops.CallHistory.request]
+callHistorySync = { type = "i64", doc = "f(j,'callHistorySync')" }
+[ops.CallHistory.response]
+reset = { type = "bool", doc = "key 'reset' -> vbb.W" }
+callHistoryItems = { type = "[any]", doc = "key 'callHistoryItems' -> waf.a with s21(13) factory -> dg1" }
+callHistorySync = { type = "i64", doc = "key 'callHistorySync' -> vbb.e0" }
+
+[ops.VideoChatDeleteHistory]
+opcode = 164
+wire = "VIDEO_CHAT_DELETE_HISTORY"
+doc = "Извлечено из декомпила 26.28. В клиенте опкод назван CALL_HISTORY_CLEAR. Request g9b(long[]) c=23 confirmed. Response dfk.h jadx case 1 returns kf1.c singleton (empty, no parsed fields)."
+[ops.VideoChatDeleteHistory.request]
+historyIds = { type = "[any]?", doc = "e('historyIds',jArr); only emitted if array non-empty (optional)" }
+[ops.VideoChatDeleteHistory.response]
+
+[ops.NotifCallHistory]
+opcode = 165
+wire = "NOTIF_CALL_HISTORY"
+doc = "Извлечено из декомпила 26.28. Verified via bya.k smali (bya.h=new bya(6); switch case 6 -> k). Builds sza(JJ,rza,List,[J). All five keys confirmed."
+[ops.NotifCallHistory.request]
+[ops.NotifCallHistory.response]
+historyIds = { type = "[any]", doc = "key 'historyIds' -> waf.c -> long[]" }
+callHistoryItems = { type = "[any]", doc = "key 'callHistoryItems' -> waf.a with ht9 factory -> dg1" }
+prevCallHistorySync = { type = "i64", doc = "key 'prevCallHistorySync' -> vbb.e0" }
+callHistorySync = { type = "i64", doc = "key 'callHistorySync' -> vbb.e0" }
+action = { type = "string", doc = "key 'action' -> vbb.i0 -> rhk.a -> rza enum" }
+
+[ops.VideoChatJoinByLink]
+opcode = 166
+wire = "VIDEO_CHAT_JOIN_BY_LINK"
+doc = "Извлечено из декомпила 26.28. В клиенте опкод назван VIDEO_CHAT_JOIN. Verified via fya.h jadx (fya.k=new fya(9); a=9 not an explicit case -> default branch shared with cases 3/5) building pci(conversationId,internalParams)."
+[ops.VideoChatJoinByLink.request]
+[ops.VideoChatJoinByLink.response]
+conversationId = { type = "string", doc = "key 'conversationId' (ApiProtocol.PARAM_CONVERSATION_ID) -> vbb.i0" }
+internalParams = { type = "string", doc = "key 'internalParams' -> vbb.i0" }
+
+[ops.MsgGetReactions]
+opcode = 180
+wire = "MSG_GET_REACTIONS"
+doc = "Извлечено из декомпила 26.28. Verified via zl0.n smali (zl0.h=new zl0(6); a=6 = pswitch_2 -> n(w2a)). Single map key confirmed."
+[ops.MsgGetReactions.request]
+[ops.MsgGetReactions.response]
+messagesReactions = { type = "{any}", doc = "key 'messagesReactions': map, i64 messageId (vbb.e0) -> t1a (pfk.b); collected into qpa, returns ila" }
+
+[ops.ProfileDelete]
+opcode = 199
+wire = "PROFILE_DELETE"
+doc = "Извлечено из декомпила 26.28. Request d77(boolean,int) c=23 confirmed. Response fya.l jadx (fya.i=new fya(7); case 7 -> l). Confirmed."
+[ops.ProfileDelete.request]
+delete = { type = "bool", doc = "a('delete',z)" }
+type = { type = "i32?", doc = "put('type', Short.valueOf(0|1)); boxed Short, only if type!=0; msgpack small int on wire" }
+[ops.ProfileDelete.response]
+timestamp = { type = "i64", doc = "key 'timestamp' -> vbb.e0; returns fce(long)" }
+
+[ops.ProfileDeleteTime]
+opcode = 200
+wire = "PROFILE_DELETE_TIME"
+doc = "Извлечено из декомпила 26.28. Request d77() c=24 sets no fields => empty request. Response gya.o smali (gya.i=new gya(7); a=7 = pswitch_2 -> o(w2a)). Single key confirmed."
+[ops.ProfileDeleteTime.request]
+[ops.ProfileDeleteTime.response]
+timestamp = { type = "i64", doc = "key 'timestamp' -> vbb.e0; returns gce(long)" }
+
+[ops.AudioTranscription]
+opcode = 202
+wire = "AUDIO_TRANSCRIPTION"
+doc = "Извлечено из декомпила 26.28. В клиенте опкод назван TRANSCRIBE_MEDIA. Request thg(long,long,long) super(x0c.G3) c=12 confirmed (chatId included). Response cmh.a singleton builds bmh(String,bnh). Both keys confirmed."
+[ops.AudioTranscription.request]
+mediaId = { type = "i64", doc = "f(j,'mediaId')" }
+messageId = { type = "i64", doc = "f(j2,'messageId')" }
+chatId = { type = "i64", doc = "f(j3,ApiProtocol.PARAM_CHAT_ID)" }
+[ops.AudioTranscription.response]
+transcription = { type = "string", doc = "key 'transcription' -> vbb.i0" }
+transcriptionStatus = { type = "i32", doc = "key 'transcriptionStatus' -> vbb.Z -> Byte; mapped to bnh enum" }
+
+[ops.PhotoUrlRefresh]
+opcode = 203
+wire = "PHOTO_URL_REFRESH"
+doc = "Извлечено из декомпила 26.28. Verified via gl3.j jadx (gl3.h=new gl3(7); case 7 -> j). Single key confirmed."
+[ops.PhotoUrlRefresh.request]
+[ops.PhotoUrlRefresh.response]
+media = { type = "[any]", doc = "key 'media': array (vbb.U length) of d30.b(w2a) into zpa; returns pgc(zpa)" }
+
+[ops.StoriesList]
+opcode = 208
+wire = "STORIES_LIST"
+doc = "Извлечено из декомпила 26.28. Verified via fya.m jadx (fya.j=new fya(8); case 8 -> m) building lig(zpa,String). Both keys confirmed."
+[ops.StoriesList.request]
+[ops.StoriesList.response]
+storiesPreviews = { type = "[any]", doc = "key 'storiesPreviews': array (vbb.U length) of djg.a(w2a) into zpa" }
+cursor = { type = "string", doc = "key 'cursor' -> vbb.i0" }
+
+[ops.StoriesGetByOwner]
+opcode = 210
+wire = "STORIES_GET_BY_OWNER"
+doc = "Извлечено из декомпила 26.28. В клиенте опкод назван STORIES_GET_BY_OWNER_ID. Verified both keys and the return new whg(peerStories, storiesPreviews) in the mx4 N=8 default branch. Kept as-is."
+[ops.StoriesGetByOwner.request]
+[ops.StoriesGetByOwner.response]
+peerStories = { type = "[any]?", doc = "default branch of mx4.h (N=8): key 'peerStories', array (vbb.U len) of lac via kac.c; defaults empty" }
+storiesPreviews = { type = "[any]?", doc = "default branch: key 'storiesPreviews', array of ejg via djg.a; defaults empty" }
+
+[ops.StoriesGetStats]
+opcode = 211
+wire = "STORIES_GET_STATS"
+doc = "Извлечено из декомпила 26.28. Verified key 'storyStats' and return new zhg(storyStats) in bya N=8 default branch. Kept."
+[ops.StoriesGetStats.request]
+[ops.StoriesGetStats.response]
+storyStats = { type = "[any]?", doc = "default branch of bya.h (N=8): key 'storyStats', array of elements via zxk.a; defaults empty" }
+
+[ops.StoriesReact]
+opcode = 213
+wire = "STORIES_REACT"
+doc = "Извлечено из декомпила 26.28. Verified: parser iya.k => new iya(8); iya.h(w2a) is 'Method not decompiled'. Branch unreadable. Response empty (confirmed)."
+[ops.StoriesReact.request]
+[ops.StoriesReact.response]
+success = { type = "bool", doc = "Inferred: from decompiled helper iya.e(w2a) (iya.java:227) which reads only key 'success' (vbb.W) and returns mjg(success). The N=6 dispatch itself (iya.h, line 507) is not decompiled, so this mapping is inferred, not confirmed." }
+
+[ops.StoriesMark]
+opcode = 214
+wire = "STORIES_MARK"
+doc = "Извлечено из декомпила 26.28. Verified: parser gya.j => new gya(8); gya.h(w2a) is 'Method not decompiled'. Branch unreadable. Response empty (confirmed)."
+[ops.StoriesMark.request]
+[ops.StoriesMark.response]
+success = { type = "bool", doc = "Inferred: from decompiled helper gya.p(w2a) (gya.java:477) which reads only key 'success' (vbb.W) and returns oig(success). The N=8 dispatch (gya.h, line 685) is not decompiled, so this mapping is inferred." }
+
+[ops.StoriesSend]
+opcode = 215
+wire = "STORIES_SEND"
+doc = "Извлечено из декомпила 26.28. Verified both keys and return new ojg(stories, storiesPreview) in dfk N=8 default branch. Kept."
+[ops.StoriesSend.request]
+[ops.StoriesSend.response]
+stories = { type = "[any]?", doc = "default branch of dfk.h (N=8, shared with case 3): key 'stories', array (vbb.U len) of xmg via wmg.b; defaults empty" }
+storiesPreview = { type = "any?", doc = "default branch: key 'storiesPreview', single ejg via djg.a; nullable" }
+
+[ops.NotifStoriesUpdate]
+opcode = 216
+wire = "NOTIF_STORIES_UPDATE"
+doc = "Извлечено из декомпила 26.28. Verified: parser zl0.i => new zl0(7); zl0.h(w2a) is 'Method not decompiled'. Branch unreadable. Response empty (confirmed)."
+[ops.NotifStoriesUpdate.request]
+[ops.NotifStoriesUpdate.response]
+storiesPreview = { type = "any?", doc = "Inferred: from decompiled helper zl0.o(w2a) (zl0.java:281) which reads only key 'storiesPreview' via djg.a(w2a) and returns e1b(ejg). Nullable — o() returns null if absent." }
+
+[ops.StoriesEdit]
+opcode = 217
+wire = "STORIES_EDIT"
+doc = "Извлечено из декомпила 26.28. Verified key 'story' and return new uhg(story) in gl3 N=8 default branch. Kept."
+[ops.StoriesEdit.request]
+[ops.StoriesEdit.response]
+story = { type = "any?", doc = "default branch of gl3.h (N=8, shared with cases 3-6): key 'story', single xmg via wmg.b; nullable" }
+
+[ops.StoriesDelete]
+opcode = 218
+wire = "STORIES_DELETE"
+doc = "Извлечено из декомпила 26.28. Verified key 'storiesPreview' and return new phg(storiesPreview) in tyf N=8 default branch. Kept."
+[ops.StoriesDelete.request]
+[ops.StoriesDelete.response]
+storiesPreview = { type = "any?", doc = "default branch of tyf.h (N=8): key 'storiesPreview', single ejg via djg.a; nullable" }
+
+[ops.StoriesGetByStoryId]
+opcode = 220
+wire = "STORIES_GET_BY_STORY_ID"
+doc = "Извлечено из декомпила 26.28. Verified key 'stories' and return new xhg(stories) in gia N=8 default branch. Kept."
+[ops.StoriesGetByStoryId.request]
+[ops.StoriesGetByStoryId.response]
+stories = { type = "[any]?", doc = "default branch of gia.h (N=8, shared with case 4): key 'stories', array (vbb.U len) of xmg via wmg.b; defaults empty" }
+
+[ops.OrgInfo]
+opcode = 256
+wire = "ORG_INFO"
+doc = "Извлечено из декомпила 26.28. Verified request key in z2c (rpa confirmed to wrap long[] => [i64]) and response key 'organizations' in tyf case-7 branch. Kept."
+[ops.OrgInfo.request]
+organizationIds = { type = "[any]?", doc = "z2c: this.a.put('organizationIds', rpaVar); rpa holds long[] arrays -> serialized array of i64. Guarded by rpaVar.j(), so optional." }
+[ops.OrgInfo.response]
+organizations = { type = "[any]?", doc = "case 7 of tyf.h (N=7): key 'organizations', array (vbb.U len) of x2c; return new a3c(organizations)" }
+
+[ops.ChatReactionsSettingsSet]
+opcode = 257
+wire = "CHAT_REACTIONS_SETTINGS_SET"
+doc = "Извлечено из декомпила 26.28. Verified key 'chatReactionsSettings' and return new t53 in fya case-2 branch. Kept."
+[ops.ChatReactionsSettingsSet.request]
+[ops.ChatReactionsSettingsSet.response]
+chatReactionsSettings = { type = "any?", doc = "case 2 of fya.h (N=2): key 'chatReactionsSettings', single j23 via m6k.w; return new t53(...); nullable" }
+
+[ops.ReactionsSettingsGetByChatId]
+opcode = 258
+wire = "REACTIONS_SETTINGS_GET_BY_CHAT_ID"
+doc = "Извлечено из декомпила 26.28. Verified key 'chatReactionsSettings' and return new or2 in gl3 case-2 branch. Kept."
+[ops.ReactionsSettingsGetByChatId.request]
+[ops.ReactionsSettingsGetByChatId.response]
+chatReactionsSettings = { type = "[any]?", doc = "case 2 of gl3.h (N=2): key 'chatReactionsSettings', array (vbb.U len) of elements via m6k.w; return new or2(list)" }
+
+[ops.FoldersGet]
+opcode = 272
+wire = "FOLDERS_GET"
+doc = "Извлечено из декомпила 26.28. Verified request: zr6 sets folderSync via f(long,String) => i64. Response parser iya.g => new iya(4); iya.h(w2a) is 'Method not decompiled', N=4 branch unreadable; response empty."
+[ops.FoldersGet.request]
+folderSync = { type = "i64", doc = "zr6: f(j, 'folderSync') -> i64 setter" }
+[ops.FoldersGet.response]
+folderSync = { type = "i64", doc = "vbb.e0 (long)" }
+folders = { type = "[any]", doc = "array (vbb.U count) of nr2 folder objects (vbb.F), held in zpa" }
+foldersOrder = { type = "[any]", doc = "waf.a with n9.e reader = vbb.i0 (String) per element; List" }
+allFilterExcludeFolders = { type = "[any]", doc = "array (vbb.U) of vbb.i0 (String), held in hqa" }
+
+[ops.FoldersGetById]
+opcode = 273
+wire = "FOLDERS_GET_BY_ID"
+doc = "Извлечено из декомпила 26.28. No request builder -> empty request. DROPPED 'folders': gya.h(w2a) dispatch is 'Method not decompiled' (UnsupportedOperationException), so the N=4 branch cannot be confirmed to call helper m() which reads 'folders'. Attribution was inferred, not proven -> response emptied."
+[ops.FoldersGetById.request]
+[ops.FoldersGetById.response]
+folders = { type = "[any]", doc = "only key parsed; token must be array (G().a()==7), vbb.U count, loop vbb.F -> nr2; held in zpa. FOLDERS_GET_BY_ID response wraps a single folder as a folders array." }
+
+[ops.FoldersUpdate]
+opcode = 274
+wire = "FOLDERS_UPDATE"
+doc = "Извлечено из декомпила 26.28. Builder kt6 verified (all 6 keys confirmed, types match). Response parser zl0.g (N=5) dispatch not decompiled; no fields confirmable -> empty."
+[ops.FoldersUpdate.request]
+id = { type = "string", doc = "h('id',str) in kt6 ctor - always set" }
+title = { type = "string", doc = "h('title',str) - always set" }
+include = { type = "[any]?", doc = "this.a.put('include', rpa); rpa backing is long[] (rpa.b). Set only when rpaVar.j()." }
+favorites = { type = "[any]?", doc = "this.a.put('favorites', LinkedHashSet); element type erased. Set only when non-empty." }
+filters = { type = "[any]?", doc = "d('filters', List<Integer>) from bq6.a (int). Set only when non-empty." }
+options = { type = "[any]?", doc = "d('options', List<Integer>) from lq6.a (int). Set only when non-empty." }
+[ops.FoldersUpdate.response]
+folder = { type = "any", doc = "vbb.F -> nr2 (single folder object)" }
+folderSync = { type = "i64", doc = "vbb.e0 (long)" }
+foldersOrder = { type = "[any]", doc = "array (vbb.U) of vbb.i0 (String), held in zpa" }
+
+[ops.FoldersReorder]
+opcode = 275
+wire = "FOLDERS_REORDER"
+doc = "Извлечено из декомпила 26.28. Builder dt6 and response dfk case4 both confirmed on-path."
+[ops.FoldersReorder.request]
+foldersOrder = { type = "[any]", doc = "d('foldersOrder', ArrayList) in dt6 ctor - always set; element type not determinable." }
+[ops.FoldersReorder.response]
+folderSync = { type = "i64?", doc = "dfk.h case N=4 reads map key 'folderSync' via w2aVar.P0() (long); returns new et6. Optional (only-if-present)." }
+
+[ops.FoldersDelete]
+opcode = 276
+wire = "FOLDERS_DELETE"
+doc = "Извлечено из декомпила 26.28. Builder wr6 and response fya case4 both confirmed on-path."
+[ops.FoldersDelete.request]
+folderIds = { type = "[any]", doc = "this.a.put('folderIds', hqa) in wr6 ctor; hqa backing is Object[] (hqa.b) -> array of any. Always set." }
+[ops.FoldersDelete.response]
+folderSync = { type = "i64?", doc = "fya.h case N=4 reads map key 'folderSync' via w2aVar.P0() (long); returns new xr6. Optional." }
+
+[ops.NotifFolders]
+opcode = 277
+wire = "NOTIF_FOLDERS"
+doc = "Извлечено из декомпила 26.28. No request builder (notification). Response parser cya.h (N=6) dispatch not decompiled; no fields confirmable."
+[ops.NotifFolders.request]
+[ops.NotifFolders.response]
+folderSync = { type = "i64", doc = "vbb.e0 (long)" }
+folders = { type = "[any]", doc = "array (vbb.U) of nr2 (vbb.F), held in zpa" }
+foldersOrder = { type = "[any]", doc = "waf.a with n9.e reader = vbb.i0 (String); List" }
+allFilterExcludeFolders = { type = "[any]", doc = "array (vbb.U) of vbb.i0 (String), held in hqa" }
+
+[ops.TranscriptionResult]
+opcode = 293
+wire = "TRANSCRIPTION_RESULT"
+doc = "Извлечено из декомпила 26.28. В клиенте опкод назван NOTIF_TRANSCRIPTION. No request builder (notification). Response parser g1b/vl3.h not decompiled. Unrecoverable."
+[ops.TranscriptionResult.request]
+[ops.TranscriptionResult.response]
+chatId = { type = "i64", doc = "vbb.e0 (long)" }
+messageId = { type = "i64", doc = "vbb.e0 (long)" }
+mediaId = { type = "i64", doc = "vbb.e0 (long)" }
+transcription = { type = "string?", doc = "vbb.i0 (String); f1b.f is String field" }
+transcriptionStatus = { type = "any", doc = "read as Byte (vbb.Z) mapped to bnh enum; f1b.g" }
+
+[ops.ChatSuggest]
+opcode = 300
+wire = "CHAT_SUGGEST"
+doc = "Извлечено из декомпила 26.28. Builder xw(String,long[]) c=2 confirmed. Response gya.d (N=2) dispatch not decompiled -> empty."
+[ops.ChatSuggest.request]
+folderId = { type = "string?", doc = "h('folderId',str) in xw(String,long[]) c=2 ctor; set only when str non-empty." }
+userChatIds = { type = "[any]?", doc = "e('userChatIds', long[]); set only when array length != 0." }
+[ops.ChatSuggest.response]
+chats = { type = "[any]", doc = "array (vbb.U count) of nm2 chat objects (nm2.b), held in zpa" }
+
+[ops.BannersGet]
+opcode = 302
+wire = "BANNERS_GET"
+doc = "Извлечено из декомпила 26.28. Builder xl0 confirmed. Response zl0.b (N=0) dispatch not decompiled -> empty."
+[ops.BannersGet.request]
+bannersSync = { type = "i64", doc = "f(j,'bannersSync') in xl0 ctor - always set." }
+[ops.BannersGet.response]
+
+[ops.SendVote]
+opcode = 304
+wire = "SEND_VOTE"
+doc = "Извлечено из декомпила 26.28. Builder luc and response gia case7->m() both confirmed on-path."
+[ops.SendVote.request]
+chatId = { type = "i64", doc = "f(j, PARAM_CHAT_ID='chatId') in luc ctor - always set." }
+pollId = { type = "i64", doc = "f(j2,'pollId') - always set." }
+messageId = { type = "i64", doc = "f(j3,'messageId') - always set." }
+answersIds = { type = "[any]", doc = "this.a.put('answersIds', kpa); kpa backing is int[] (kpa.b) -> array of i32. Always set." }
+[ops.SendVote.response]
+state = { type = "any?", doc = "gia.h case N=7 -> helper m() reads map key 'state' via fmk.a(w2a); returns new muc. Optional (default null)." }
+
+[ops.VotersListByAnswer]
+opcode = 305
+wire = "VOTERS_LIST_BY_ANSWER"
+doc = "Извлечено из декомпила 26.28. Builder suc confirmed (all 5 keys). Response qma.g (N=7) parse methods not decompiled -> empty."
+[ops.VotersListByAnswer.request]
+chatId = { type = "i64", doc = "f(j, PARAM_CHAT_ID='chatId') in suc ctor - always set." }
+pollId = { type = "i64", doc = "f(j2,'pollId') - always set." }
+messageId = { type = "i64", doc = "f(j3,'messageId') - always set." }
+answerId = { type = "i32", doc = "c(i,'answerId') - always set." }
+marker = { type = "i64?", doc = "f(j4,'marker') - set only when j4 > 0." }
+[ops.VotersListByAnswer.response]
+
+[ops.GetPollUpdates]
+opcode = 306
+wire = "GET_POLL_UPDATES"
+doc = "Извлечено из декомпила 26.28. Builder gla and response dfk case5->i() both confirmed on-path."
+[ops.GetPollUpdates.request]
+chatId = { type = "i64", doc = "f(this.c, PARAM_CHAT_ID='chatId') in gla ctor - always set." }
+polls = { type = "[any]", doc = "d('polls', List) where each element = lgk.a({messageId:i64, pollId:i64}) from x13(a=messageId,b=pollId). Element is object{messageId:i64,pollId:i64}. Builder throws if list empty, so effectively always set." }
+[ops.GetPollUpdates.response]
+polls = { type = "[any]?", doc = "dfk.h case N=5 -> helper i() reads map key 'polls' as array (vbb.U length) of bmk.b(w2a) poll objects; returns new hla. Optional (default o6b.b)." }
+
