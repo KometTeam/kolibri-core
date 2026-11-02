@@ -2388,7 +2388,7 @@ kb_status kb_decode_web_app_init_data_response(const uint8_t *body, size_t len,
                        kb_web_app_init_data_response *out);
 
 /*
- * Значение map chats[].adminParticipants (ключ — id участника). Из Ð¾ÑÐ²ÐµÑÐ° LOGIN, напр. {'10000001':{'id':10000001,'permissions':4095}}. adminParticipants присутствует у 44 из 50 чатов; в записях id есть всегда (44/44), permissions — у 42/44.
+ * Значение map chats[].adminParticipants (ключ — id участника). Из ответа LOGIN, напр. {'10000001':{'id':10000001,'permissions':4095}}. adminParticipants присутствует у 44 из 50 чатов; в записях id есть всегда (44/44), permissions — у 42/44.
  */
 typedef struct {
     /* id */
@@ -2606,7 +2606,7 @@ kb_status kb_decode_button(const uint8_t *body, size_t len,
                        kb_button *out);
 
 /*
- * A chat/dialog/channel entry. Verified against chats[] (50 samples) in Ð¾ÑÐ²ÐµÑÐ° LOGIN and the decompiled parser nm2.java (case labels). Optionality from presence across the 50 login samples; parser-only fields (absent from capture, present as case labels in nm2.java) are optional. All counts, enum values and value types re-checked. Correction vs prior output: liveLocationMessageIds is a map {i64} in the parser, not [i64].
+ * A chat/dialog/channel entry. Verified against chats[] (50 samples) in ответа LOGIN and the decompiled parser nm2.java (case labels). Optionality from presence across the 50 login samples; parser-only fields (absent from capture, present as case labels in nm2.java) are optional. All counts, enum values and value types re-checked. Correction vs prior output: liveLocationMessageIds is a map {i64} in the parser, not [i64].
  */
 typedef struct {
     /* id */
@@ -2760,7 +2760,7 @@ kb_status kb_decode_chat(const uint8_t *body, size_t len,
                        kb_chat *out);
 
 /*
- * chats[].reactions из Ð¾ÑÐ²ÐµÑÐ° LOGIN, напр. {'isActive':false,'updateTime':1700000000000}. Присутствует у 46 из 50 чатов; оба поля есть во всех 46.
+ * chats[].reactions из ответа LOGIN, напр. {'isActive':false,'updateTime':1700000000000}. Присутствует у 46 из 50 чатов; оба поля есть во всех 46.
  */
 typedef struct {
     /* isActive */
@@ -2775,7 +2775,7 @@ kb_status kb_decode_chat_reactions(const uint8_t *body, size_t len,
                        kb_chat_reactions *out);
 
 /*
- * User/contact profile. Verified: Ð¾ÑÐ²ÐµÑÐ° CONTACT_INFO contacts[0] and Ð¾ÑÐ²ÐµÑÐ° LOGIN profile.contact. All keys present in both samples except phone.
+ * User/contact profile. Verified: ответа CONTACT_INFO contacts[0] and ответа LOGIN profile.contact. All keys present in both samples except phone.
  */
 typedef struct {
     /* id */
@@ -2849,7 +2849,7 @@ kb_status kb_decode_element(const uint8_t *body, size_t len,
                        kb_element *out);
 
 /*
- * Весь Ð¾ÑÐ²ÐµÑ-Ð¾ÑÐ¸Ð±ÐºÐ° — конверт ошибки сервера MAX. Все 4 поля присутствуют.
+ * Весь ответ-ошибка — конверт ошибки сервера MAX. Все 4 поля присутствуют.
  */
 typedef struct {
     /* error */

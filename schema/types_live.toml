@@ -1,7 +1,7 @@
 # @extracted tools живой захват + парсеры декомпила (round 1 + 2).
 
 [types.AdminParticipant]
-doc = "Значение map chats[].adminParticipants (ключ — id участника). Из Ð¾ÑÐ²ÐµÑÐ° LOGIN, напр. {'10000001':{'id':10000001,'permissions':4095}}. adminParticipants присутствует у 44 из 50 чатов; в записях id есть всегда (44/44), permissions — у 42/44."
+doc = "Значение map chats[].adminParticipants (ключ — id участника). Из ответа LOGIN, напр. {'10000001':{'id':10000001,'permissions':4095}}. adminParticipants присутствует у 44 из 50 чатов; в записях id есть всегда (44/44), permissions — у 42/44."
 [types.AdminParticipant.fields]
 id = { type = "i64", doc = "id администратора; присутствует во всех 44 записях" }
 permissions = { type = "i64?", doc = "битовая маска прав (напр. 4095); есть у 42 из 44 записей в захвате → опционально" }
@@ -75,7 +75,7 @@ isQuick = { type = "bool?", doc = "serializer-only (i21.f via b18.a)" }
 contactId = { type = "i64?", doc = "serializer-only (i21.g via b18.a)" }
 
 [types.Chat]
-doc = "A chat/dialog/channel entry. Verified against chats[] (50 samples) in Ð¾ÑÐ²ÐµÑÐ° LOGIN and the decompiled parser nm2.java (case labels). Optionality from presence across the 50 login samples; parser-only fields (absent from capture, present as case labels in nm2.java) are optional. All counts, enum values and value types re-checked. Correction vs prior output: liveLocationMessageIds is a map {i64} in the parser, not [i64]."
+doc = "A chat/dialog/channel entry. Verified against chats[] (50 samples) in ответа LOGIN and the decompiled parser nm2.java (case labels). Optionality from presence across the 50 login samples; parser-only fields (absent from capture, present as case labels in nm2.java) are optional. All counts, enum values and value types re-checked. Correction vs prior output: liveLocationMessageIds is a map {i64} in the parser, not [i64]."
 [types.Chat.fields]
 id = { type = "i64", doc = "50/50 required. Chat id, e.g. 20000002 or negative." }
 type = { type = "string", doc = "50/50 required. Enum: DIALOG | CHAT | CHANNEL (all present)." }
@@ -129,13 +129,13 @@ liveLocationMessageIds = { type = "{i64}?", doc = "Parser-only (nm2.java lines 2
 liveStreamUpdateTime = { type = "i64?", doc = "Parser-only (nm2.java, vbb.e0 long). Optional." }
 
 [types.ChatReactions]
-doc = "chats[].reactions из Ð¾ÑÐ²ÐµÑÐ° LOGIN, напр. {'isActive':false,'updateTime':1700000000000}. Присутствует у 46 из 50 чатов; оба поля есть во всех 46."
+doc = "chats[].reactions из ответа LOGIN, напр. {'isActive':false,'updateTime':1700000000000}. Присутствует у 46 из 50 чатов; оба поля есть во всех 46."
 [types.ChatReactions.fields]
 isActive = { type = "bool", doc = "активны ли реакции в чате; 46/46" }
 updateTime = { type = "i64", doc = "время последнего обновления (мс); 46/46, встречается значение 0" }
 
 [types.Contact]
-doc = "User/contact profile. Verified: Ð¾ÑÐ²ÐµÑÐ° CONTACT_INFO contacts[0] and Ð¾ÑÐ²ÐµÑÐ° LOGIN profile.contact. All keys present in both samples except phone."
+doc = "User/contact profile. Verified: ответа CONTACT_INFO contacts[0] and ответа LOGIN profile.contact. All keys present in both samples except phone."
 [types.Contact.fields]
 id = { type = "i64", doc = "int, e.g. 10000001" }
 updateTime = { type = "i64", doc = "epoch ms" }
@@ -146,7 +146,7 @@ photoId = { type = "i64", doc = "int, e.g. 30000004" }
 phone = { type = "i64?", doc = "int, present only in LOGIN profile.contact (own profile); absent in 32_contact_info contacts[0]" }
 names = "[Name]"
 options = { type = "[string]", doc = "e.g. ['TT','ONEME']" }
-description = { type = "string", doc = "e.g. 'Ð¾ ÑÐµÐ±Ðµ'" }
+description = { type = "string", doc = "e.g. 'о себе'" }
 accountStatus = { type = "i64", doc = "int enum, 0 in samples" }
 country = { type = "string", doc = "e.g. RU" }
 
@@ -157,7 +157,7 @@ timeToFire = { type = "i64?", doc = "i55.a. Ключ 'timeToFire' (Long). Вре
 notifySender = { type = "bool?", doc = "i55.b. Ключ 'notifySender' (Boolean). Уведомлять отправителя." }
 
 [types.ErrorEnvelope]
-doc = "Весь Ð¾ÑÐ²ÐµÑ-Ð¾ÑÐ¸Ð±ÐºÐ° — конверт ошибки сервера MAX. Все 4 поля присутствуют."
+doc = "Весь ответ-ошибка — конверт ошибки сервера MAX. Все 4 поля присутствуют."
 [types.ErrorEnvelope.fields]
 error = { type = "string", doc = "машинный код ошибки, напр. 'chat.denied'" }
 message = { type = "string", doc = "техническое сообщение, напр. 'User is not admin'" }
